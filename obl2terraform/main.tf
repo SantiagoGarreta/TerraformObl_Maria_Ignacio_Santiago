@@ -64,3 +64,25 @@ output "cloudfront_url" {
   description = "La URL de la distribución de CloudFront"
   value       = aws_cloudfront_distribution.cdn.domain_name
 }
+
+
+data "aws_ami" "amazon_linux_2" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "owner-id"
+    values = ["137112412989"]
+  }
+}
+
+module "ec2_Instance" {
+  source        = "./modules/ec2_Instance"
+  ami_id        = data.aws_ami.amazon_linux_2.id
+  instance_type = "t2.micro"
+  instance_name = "example-web-instance"
+}
