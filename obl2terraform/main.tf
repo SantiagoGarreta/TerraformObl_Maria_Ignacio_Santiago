@@ -86,3 +86,10 @@ module "ec2_Instance" {
   instance_type = "t2.micro"
   instance_name = "example-web-instance"
 }
+
+module "s3_storageService" {
+  source             = "./modules/s3_storageService"
+  bucket_name_primary = "user-documents-bucket-primary-obligatorio2"
+  bucket_name_secondary = "user-documents-bucket-secondary-obligatorio2"
+  region_secondary      = "us-west-1"
+}
