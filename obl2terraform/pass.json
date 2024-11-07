@@ -1,0 +1,11 @@
+{
+    "transaction_id": "TX123456789",
+    "sender_bank_code": "BANK01",
+    "sender_account_number": "1234567890",
+    "receiver_account_number": "0987654321",
+    "amount": 1500.75,
+    "currency": "USD",
+    "transaction_date": "2024-11-02T10:00:00Z",
+    "description": "Pago de factura de servicios"
+  }
+  

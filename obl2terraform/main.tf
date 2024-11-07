@@ -1,14 +1,3 @@
-/*resource "aws_s3_bucket" "bucket" {
-    bucket = "terraformsantiagogarreta"
-
-    tags = {
-        Name = "My bucket"
-        Environment = "Dev"
-    }
-  
-}
-*/
-
 module "s3_static_site" {
   source      = "./modules/s3_staticWebSite"
   bucket_name = "bucket-s3-static-website-obligatorio"
@@ -98,4 +87,14 @@ module "sns_sqs" {
   source     = "./modules/notifications"
   queue_name = "example-queue"
   topic_name = "example-topic"
+}
+
+module "bank_transaction_processing" {
+  source                = "./modules/bank_transaction_processing"
+  bucket_name           = "bank-transaction-uploads"
+  lambda_function_name  = "TransactionProcessorFunction"
+  lambda_runtime        = "nodejs18.x"
+  lambda_handler        = "index.handler"
+  lambda_zip_file       = "./modules/bank_transaction_processing/function.zip" 
+  authorized_user_arn   = "arn:aws:iam::484121837786:user/SantiagoTerraform" //usar el ARN del usuario
 }
