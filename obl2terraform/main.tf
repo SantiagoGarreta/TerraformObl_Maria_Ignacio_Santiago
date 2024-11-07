@@ -93,3 +93,9 @@ module "s3_storageService" {
   bucket_name_secondary = "user-documents-bucket-secondary-obligatorio2"
   region_secondary      = "us-west-1"
 }
+
+module "sns_sqs" {
+  source     = "./modules/notifications"
+  queue_name = "example-queue"
+  topic_name = "example-topic"
+}
