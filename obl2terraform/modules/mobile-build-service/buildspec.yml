@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+    commands:
+      - echo "Instalando dependencias"
+  pre_build:
+    commands:
+      - echo "Iniciando sesión en Amazon ECR"
+      - $(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 484121837786.dkr.ecr.us-east-1.amazonaws.com)
+      - REPO_URI=484121837786.dkr.ecr.us-east-1.amazonaws.com/my-app-repo
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)
+  build:
+    commands:
+      - echo "Construyendo la imagen Docker"
+      - docker build -t $REPO_URI:$IMAGE_TAG .
+      - docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
+  post_build:
+    commands:
+      - echo "Empujando la imagen a ECR"
+      - docker push $REPO_URI:$IMAGE_TAG
+      - docker push $REPO_URI:latest
