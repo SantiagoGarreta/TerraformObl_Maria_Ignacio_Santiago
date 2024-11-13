@@ -1,22 +1,27 @@
 # modules/api_gateway/variables.tf
 
-variable "api_name" {
+variable "environment" {
+  description = "Environment name"
   type        = string
-  description = "Name of the API Gateway"
 }
 
-variable "lambda_arn" {
+variable "lambda_invoke_arn" {
+  description = "ARN for invoking the Lambda function"
   type        = string
-  description = "ARN of the Lambda function"
 }
 
 variable "lambda_function_name" {
-  type        = string
   description = "Name of the Lambda function"
+  type        = string
 }
 
-variable "environment" {
+variable "lambda_arn" {
+  description = "ARN of the Lambda function"
   type        = string
-  description = "Environment name (e.g., prod, dev)"
-  default     = "prod"
+}
+
+variable "api_name" {
+  description = "Name of the API"
+  type        = string
+  default     = "transaction_api"
 }

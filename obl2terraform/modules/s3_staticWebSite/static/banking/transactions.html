@@ -11,7 +11,31 @@
         <div class="bg-white rounded-xl shadow-md overflow-hidden p-8">
             <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">Banking Transaction</h1>
             
-            <form id="transactionForm" class="space-y-6">
+            <!-- File Upload Section -->
+            <div class="mb-8 border-2 border-dashed border-gray-300 rounded-lg p-6">
+                <div class="text-center">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transaction List (JSON)</label>
+                    <input type="file" id="jsonFile" accept=".json"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <p class="mt-1 text-sm text-gray-500">Upload a JSON file containing a list of transactions</p>
+                    <button id="uploadButton" 
+                        class="mt-4 bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Upload Transactions
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Or enter single transaction</span>
+                </div>
+            </div>
+
+            <!-- Single Transaction Form -->
+            <form id="transactionForm" class="space-y-6 mt-8">
                 <!-- Transaction Details Section -->
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Transaction Details</h2>
@@ -66,7 +90,9 @@
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
                                 <option value="">Select Currency</option>
                                 <option value="USD">USD - US Dollar</option>
+                                <option value="CAD">CAD - Canadian Dollar</option>
                                 <option value="EUR">EUR - Euro</option>
+                                <option value="GBP">GBP - British Pound</option>
                                 <option value="UYU">UYU - Peso Uruguayo</option>
                                 <option value="ARS">ARS - Peso Argentino</option>
                                 <option value="BRL">BRL - Real</option>
@@ -93,7 +119,7 @@
 
                 <button type="submit" 
                     class="w-full bg-blue-600 text-white rounded-md px-4 py-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium">
-                    Submit Transaction
+                    Submit Single Transaction
                 </button>
             </form>
             
@@ -101,7 +127,7 @@
             <div id="response" class="mt-6 hidden">
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Transaction Response</h2>
-                    <div id="responseContent"></div>
+                    <div id="responseContent" class="whitespace-pre-wrap font-mono text-sm"></div>
                 </div>
             </div>
         </div>
@@ -110,6 +136,7 @@
     <script>
         const API_ENDPOINT = 'https://t84lwv0ej2.execute-api.us-east-1.amazonaws.com/prod/transacciones';
         
+        // Handle single transaction form submission
         document.getElementById('transactionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -129,8 +156,6 @@
                     transaction_date: new Date().toISOString()
                 };
                 
-                console.log('Sending data:', data);
-                
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
@@ -140,33 +165,57 @@
                 });
                 
                 const result = await response.json();
-                console.log('Response:', result);
-                
-                if (response.ok) {
-                    responseContent.className = 'bg-green-100 p-4 rounded-md';
-                    responseContent.innerHTML = `
-                        <p class="text-green-700 font-bold mb-2">Transaction Successful!</p>
-                        <div class="text-sm text-green-600">
-                            <pre class="whitespace-pre-wrap">${JSON.stringify(result, null, 2)}</pre>
-                        </div>
-                    `;
-                    e.target.reset();
-                } else {
-                    responseContent.className = 'bg-red-100 p-4 rounded-md';
-                    responseContent.innerHTML = `
-                        <p class="text-red-700 font-bold mb-2">Transaction Failed</p>
-                        <div class="text-sm text-red-600">
-                            <pre class="whitespace-pre-wrap">${JSON.stringify(result, null, 2)}</pre>
-                        </div>
-                    `;
-                }
+                responseContent.className = 'bg-green-100 p-4 rounded-md';
+                responseContent.innerHTML = `<pre class="text-green-700">${JSON.stringify(result, null, 2)}</pre>`;
+                e.target.reset();
             } catch (error) {
-                console.error('Error:', error);
                 responseContent.className = 'bg-red-100 p-4 rounded-md';
-                responseContent.innerHTML = `
-                    <p class="text-red-700 font-bold mb-2">Error</p>
-                    <p class="text-sm text-red-600">${error.message}</p>
-                `;
+                responseContent.innerHTML = `<pre class="text-red-700">Error: ${error.message}</pre>`;
+            }
+        });
+
+        // Handle file upload
+        document.getElementById('uploadButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('jsonFile');
+            const file = fileInput.files[0];
+            const responseDiv = document.getElementById('response');
+            const responseContent = document.getElementById('responseContent');
+            responseDiv.style.display = 'block';
+
+            if (!file) {
+                responseContent.className = 'bg-red-100 p-4 rounded-md';
+                responseContent.innerHTML = '<pre class="text-red-700">Please select a file first</pre>';
+                return;
+            }
+
+            try {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const transactions = JSON.parse(e.target.result);
+                        
+                        const response = await fetch(API_ENDPOINT, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ transactions })
+                        });
+
+                        const result = await response.json();
+                        responseContent.className = 'bg-green-100 p-4 rounded-md';
+                        responseContent.innerHTML = `<pre class="text-green-700">${JSON.stringify(result, null, 2)}</pre>`;
+                        fileInput.value = ''; // Clear the file input
+                    } catch (error) {
+                        responseContent.className = 'bg-red-100 p-4 rounded-md';
+                        responseContent.innerHTML = `<pre class="text-red-700">Error processing JSON: ${error.message}</pre>`;
+                    }
+                };
+
+                reader.readAsText(file);
+            } catch (error) {
+                responseContent.className = 'bg-red-100 p-4 rounded-md';
+                responseContent.innerHTML = `<pre class="text-red-700">Error reading file: ${error.message}</pre>`;
             }
         });
     </script>

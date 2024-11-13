@@ -1,7 +1,7 @@
 module "s3_static_site" {
   source       = "./modules/s3_staticWebSite"
   bucket_name  = "bucket-s3-static-website-obl-2024-ms"
-  api_endpoint = module.api_gateway.api_endpoint
+  api_endpoint  = module.api_gateway.api_endpoint  # Now matches the output name
   tags = {
     Environment = "Production"
     Project     = "Static Website"
@@ -104,15 +104,67 @@ module "bank_transaction_processing" {
 }
 
 module "lambda" {
-  source              = "./modules/lambda"
-  lambda_function_name = "TransactionProcessor"
+  source = "./modules/lambda"
+  environment   = var.environment
+  api_gateway_execution_arn = module.api_gateway.execution_arn
+  lambda_function_name = "transaction_processor"
+  db_host     = module.rds.rds_endpoint
+  db_name     = module.rds.rds_database_name
+  db_user     = var.db_username
+  db_password = var.db_password
+  db_port     = module.rds.rds_port
 }
 
 
 module "api_gateway" {
-  source              = "./modules/api_gateway"
-  api_name            = "banking-transaction-api"
-  lambda_arn          = module.lambda.lambda_arn
-  lambda_function_name = module.lambda.lambda_function_name
-  environment         = "prod"
+  source = "./modules/api_gateway"
+
+  environment          = var.environment
+  lambda_invoke_arn    = module.lambda.invoke_arn
+  lambda_function_name = module.lambda.function_name
+  lambda_arn          = module.lambda.function_arn
+  api_name            = "transaction_api"
+}
+
+
+data "aws_vpc" "default" {
+  default = true
+}
+
+# Get default subnets
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+resource "aws_security_group" "lambda" {
+  name_prefix = "${var.environment}-lambda-sg"
+  vpc_id      = data.aws_vpc.default.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "${var.environment}-lambda-sg"
+    Environment = var.environment
+  }
+}
+
+module "rds" {
+  source = "./modules/rds"
+
+  environment         = var.environment
+  vpc_id             = data.aws_vpc.default.id
+  private_subnet_ids = data.aws_subnets.default.ids
+  lambda_security_group_id = aws_security_group.lambda.id
+
+  database_name     = "banking_db"
+  database_username = var.db_username
+  database_password = var.db_password
 }
