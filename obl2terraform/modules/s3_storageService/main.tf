@@ -25,10 +25,6 @@ resource "aws_s3_bucket_replication_configuration" "primary_replication" {
   }
 }
 
-provider "aws" {
-  alias  = "secondary"
-  region = var.region_secondary
-}
 
 resource "aws_s3_bucket" "user_files_secondary" {
   provider = aws.secondary
@@ -123,5 +119,6 @@ resource "aws_iam_role_policy" "replication_policy" {
     ]
   })
 }
+
 
 data "aws_caller_identity" "current" {}

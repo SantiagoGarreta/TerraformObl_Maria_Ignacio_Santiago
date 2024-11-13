@@ -1,10 +1,12 @@
 module "s3_static_site" {
-  source      = "./modules/s3_staticWebSite"
-  bucket_name = "bucket-s3-static-website-obligatorio"
+  source       = "./modules/s3_staticWebSite"
+  bucket_name  = "bucket-s3-static-website-obl-2024-ms"
+  api_endpoint = "${module.api_gateway.api_endpoint}/transacciones"  # Make sure this matches your API Gateway endpoint
   tags = {
     Environment = "Production"
     Project     = "Static Website"
   }
+  angular_app_path = "./angular-app/dist/angular-app"  # This should point to your built Angular app
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
@@ -78,9 +80,13 @@ module "ec2_Instance" {
 
 module "s3_storageService" {
   source             = "./modules/s3_storageService"
-  bucket_name_primary = "user-documents-bucket-primary-obligatorio2"
-  bucket_name_secondary = "user-documents-bucket-secondary-obligatorio2"
+  bucket_name_primary   = "user-docs-primary-obl2-2024-ms"    
+  bucket_name_secondary = "user-docs-secondary-obl2-2024-ms"  
   region_secondary      = "us-west-1"
+  providers = {
+    aws           = aws
+    aws.secondary = aws.secondary
+  }
 }
 
 module "sns_sqs" {
@@ -91,10 +97,23 @@ module "sns_sqs" {
 
 module "bank_transaction_processing" {
   source                = "./modules/bank_transaction_processing"
-  bucket_name           = "bank-transaction-uploads"
+  bucket_name          = "bank-transaction-uploads-2024-ms"  
   lambda_function_name  = "TransactionProcessorFunction"
   lambda_runtime        = "nodejs18.x"
   lambda_handler        = "index.handler"
   lambda_zip_file       = "./modules/bank_transaction_processing/function.zip" 
-  authorized_user_arn   = "arn:aws:iam::484121837786:user/SantiagoTerraform" //usar el ARN del usuario
+  authorized_user_arn   = "arn:aws:iam::423623837482:user/NoeTerraform" //usar el ARN del usuario
+}
+
+module "lambda" {
+  source              = "./modules/lambda"
+  lambda_function_name = "TransactionProcessor"
+}
+
+module "api_gateway" {
+  source              = "./modules/api_gateway"
+  api_name            = "banking-transaction-api"
+  lambda_arn          = module.lambda.lambda_arn
+  lambda_function_name = module.lambda.lambda_function_name
+  environment         = "prod"
 }

@@ -1,13 +1,20 @@
 variable "bucket_name" {
-  description = "Bucket S3 para el sitio web estático"
   type        = string
+  description = "Name of the S3 bucket"
 }
 
 variable "tags" {
-  description = "Bucket S3 para el sitio web estático"
   type        = map(string)
-  default     = {
-    Environment = "Dev"
-    Project     = "Static Website"
-  }
+  description = "Tags to apply to the bucket"
+  default     = {}
+}
+
+variable "api_endpoint" {
+  type        = string
+  description = "API Gateway endpoint URL"
+}
+
+variable "angular_app_path" {
+  type        = string
+  description = "Path to the built Angular app"
 }
