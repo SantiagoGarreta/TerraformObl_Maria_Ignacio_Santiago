@@ -98,3 +98,14 @@ module "bank_transaction_processing" {
   lambda_zip_file       = "./modules/bank_transaction_processing/function.zip" 
   authorized_user_arn   = "arn:aws:iam::484121837786:user/SantiagoTerraform" //usar el ARN del usuario
 }
+
+module "mobile_build_service" {
+  source = "./modules/mobile-build-service"
+
+  github_owner         = "tu_nombre_de_usuario_en_github"
+  github_repo          = "nombre_del_repositorio"
+  github_branch        = "main"  
+  github_token         = "tu_github_token"
+  aws_region           = "us-east-1"
+  ecr_repository_name  = "my-app-repo"
+}
