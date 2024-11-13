@@ -13,8 +13,3 @@ variable "api_endpoint" {
   type        = string
   description = "API Gateway endpoint URL"
 }
-
-variable "angular_app_path" {
-  type        = string
-  description = "Path to the built Angular app"
-}

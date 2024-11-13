@@ -1,155 +1,171 @@
-<!-- Save this as modules/s3_staticWebSite/static/banking/transactions.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Transacciones Bancarias</title>
+    <title>Banking Transaction</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-100">
-    <!-- Navigation -->
-    <nav class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="/" class="text-xl font-bold">Digital Bank</a>
-            <a href="/app" class="hover:text-blue-200">Ir a la App Principal</a>
-        </div>
-    </nav>
-
-    <div class="min-h-screen py-6 flex flex-col justify-center sm:py-12">
-        <div class="relative py-3 sm:max-w-xl sm:mx-auto">
-            <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-                <div class="max-w-md mx-auto">
-                    <div class="divide-y divide-gray-200">
-                        <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                            <h2 class="text-2xl font-bold mb-8 text-center text-blue-600">Nueva Transacción Bancaria</h2>
-                            <form id="transactionForm" class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">ID de Transacción</label>
-                                    <input type="text" id="transaction_id" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Código de Banco</label>
-                                    <input type="text" id="sender_bank_code" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Cuenta Origen</label>
-                                    <input type="text" id="sender_account_number" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Cuenta Destino</label>
-                                    <input type="text" id="receiver_account_number" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Monto</label>
-                                    <input type="number" id="amount" step="0.01" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Moneda</label>
-                                    <select id="currency" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        <option value="">Seleccionar moneda</option>
-                                        <option value="USD">USD - Dólar Americano</option>
-                                        <option value="CAD">CAD - Dólar Canadiense</option>
-                                        <option value="EUR">EUR - Euro</option>
-                                        <option value="GBP">GBP - Libra Esterlina</option>
-                                        <option value="UYU">UYU - Peso Uruguayo</option>
-                                        <option value="ARS">ARS - Peso Argentino</option>
-                                        <option value="BRL">BRL - Real</option>
-                                        <option value="CLP">CLP - Peso Chileno</option>
-                                        <option value="COP">COP - Peso Colombiano</option>
-                                        <option value="PEN">PEN - Sol Peruano</option>
-                                        <option value="PYG">PYG - Guaraní</option>
-                                        <option value="MXN">MXN - Peso Mexicano</option>
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Descripción</label>
-                                    <textarea id="description"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-                                </div>
-                                
-                                <div class="mt-6">
-                                    <button type="submit"
-                                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        <i class="fas fa-paper-plane mr-2"></i> Enviar Transacción
-                                    </button>
-                                </div>
-                            </form>
+    <div class="max-w-2xl mx-auto p-8">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden p-8">
+            <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">Banking Transaction</h1>
+            
+            <form id="transactionForm" class="space-y-6">
+                <!-- Transaction Details Section -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Transaction Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Transaction ID</label>
+                            <input type="text" id="transaction_id" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+                                placeholder="TRX-123456">
                         </div>
-                        <div id="response" class="mt-4 p-4 rounded hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Bank Code</label>
+                            <input type="text" id="sender_bank_code" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+                                placeholder="BANK001">
                         </div>
                     </div>
+                </div>
+
+                <!-- Account Information Section -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Account Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Sender Account Number</label>
+                            <input type="text" id="sender_account_number" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+                                placeholder="1234567890">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Receiver Account Number</label>
+                            <input type="text" id="receiver_account_number" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+                                placeholder="0987654321">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amount and Currency Section -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Amount and Currency</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Amount</label>
+                            <input type="number" id="amount" required step="0.01"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+                                placeholder="100.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Currency</label>
+                            <select id="currency" required 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2">
+                                <option value="">Select Currency</option>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="UYU">UYU - Peso Uruguayo</option>
+                                <option value="ARS">ARS - Peso Argentino</option>
+                                <option value="BRL">BRL - Real</option>
+                                <option value="CLP">CLP - Peso Chileno</option>
+                                <option value="COP">COP - Peso Colombiano</option>
+                                <option value="PEN">PEN - Sol Peruano</option>
+                                <option value="PYG">PYG - Guaraní</option>
+                                <option value="MXN">MXN - Peso Mexicano</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Additional Information</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="description" rows="3" 
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2"
+                            placeholder="Enter transaction description"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-blue-600 text-white rounded-md px-4 py-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium">
+                    Submit Transaction
+                </button>
+            </form>
+            
+            <!-- Response Display -->
+            <div id="response" class="mt-6 hidden">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Transaction Response</h2>
+                    <div id="responseContent"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-      const API_ENDPOINT = 'https://5vth9azeje.execute-api.us-east-1.amazonaws.com/prod/transacciones';
-
+        const API_ENDPOINT = 'https://t84lwv0ej2.execute-api.us-east-1.amazonaws.com/prod/transacciones';
+        
         document.getElementById('transactionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const responseDiv = document.getElementById('response');
-            responseDiv.className = 'mt-4 p-4 rounded';
+            const responseContent = document.getElementById('responseContent');
             responseDiv.style.display = 'block';
-
+            
             try {
-                const formData = {
-                    transaction_id: document.getElementById('transaction_id').value,
+                const data = {
+                    transaction_id: document.getElementById('transaction_id').value || 'TRX-' + Date.now(),
                     sender_bank_code: document.getElementById('sender_bank_code').value,
                     sender_account_number: document.getElementById('sender_account_number').value,
                     receiver_account_number: document.getElementById('receiver_account_number').value,
                     amount: parseFloat(document.getElementById('amount').value),
                     currency: document.getElementById('currency').value,
-                    transaction_date: new Date().toISOString(),
-                    description: document.getElementById('description').value || ''
+                    description: document.getElementById('description').value || '',
+                    transaction_date: new Date().toISOString()
                 };
-
+                
+                console.log('Sending data:', data);
+                
                 const response = await fetch(API_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Origin': window.location.origin
-                        },
-                        credentials: 'omit',  // Add this line
-                        body: JSON.stringify(formData)
-                    });
-
-                const data = await response.json();
-
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('Response:', result);
+                
                 if (response.ok) {
-                    responseDiv.className = 'mt-4 p-4 rounded bg-green-100 text-green-700';
-                    responseDiv.innerHTML = `
-                        <h3 class="font-bold">¡Transacción Exitosa!</h3>
-                        <pre class="mt-2 whitespace-pre-wrap">${JSON.stringify(data, null, 2)}</pre>
+                    responseContent.className = 'bg-green-100 p-4 rounded-md';
+                    responseContent.innerHTML = `
+                        <p class="text-green-700 font-bold mb-2">Transaction Successful!</p>
+                        <div class="text-sm text-green-600">
+                            <pre class="whitespace-pre-wrap">${JSON.stringify(result, null, 2)}</pre>
+                        </div>
                     `;
                     e.target.reset();
                 } else {
-                    responseDiv.className = 'mt-4 p-4 rounded bg-red-100 text-red-700';
-                    responseDiv.innerHTML = `
-                        <h3 class="font-bold">Error en la Transacción</h3>
-                        <pre class="mt-2 whitespace-pre-wrap">${JSON.stringify(data, null, 2)}</pre>
+                    responseContent.className = 'bg-red-100 p-4 rounded-md';
+                    responseContent.innerHTML = `
+                        <p class="text-red-700 font-bold mb-2">Transaction Failed</p>
+                        <div class="text-sm text-red-600">
+                            <pre class="whitespace-pre-wrap">${JSON.stringify(result, null, 2)}</pre>
+                        </div>
                     `;
                 }
             } catch (error) {
-                responseDiv.className = 'mt-4 p-4 rounded bg-red-100 text-red-700';
-                responseDiv.innerHTML = `
-                    <h3 class="font-bold">Error de Sistema</h3>
-                    <p>${error.message}</p>
+                console.error('Error:', error);
+                responseContent.className = 'bg-red-100 p-4 rounded-md';
+                responseContent.innerHTML = `
+                    <p class="text-red-700 font-bold mb-2">Error</p>
+                    <p class="text-sm text-red-600">${error.message}</p>
                 `;
             }
         });

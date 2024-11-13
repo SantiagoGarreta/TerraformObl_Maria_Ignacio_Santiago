@@ -1,14 +1,12 @@
 module "s3_static_site" {
   source       = "./modules/s3_staticWebSite"
   bucket_name  = "bucket-s3-static-website-obl-2024-ms"
-  api_endpoint = "${module.api_gateway.api_endpoint}/transacciones"  # Make sure this matches your API Gateway endpoint
+  api_endpoint = module.api_gateway.api_endpoint
   tags = {
     Environment = "Production"
     Project     = "Static Website"
   }
-  angular_app_path = "./angular-app/dist/angular-app"  # This should point to your built Angular app
 }
-
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
     domain_name = module.s3_static_site.website_url
@@ -109,6 +107,7 @@ module "lambda" {
   source              = "./modules/lambda"
   lambda_function_name = "TransactionProcessor"
 }
+
 
 module "api_gateway" {
   source              = "./modules/api_gateway"
